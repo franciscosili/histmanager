@@ -31,8 +31,19 @@ class HistManager:
         else:
             self.data[name].Fill(value)
     
+    def fill_2d(self, name, valuex, valuey, weight=None):
+        if weight is not None:
+            self.data[name].Fill(valuex, valuey, weight)
+        elif self.weight is not None:
+            self.data[name].Fill(valuex, valuey, self.weight)
+        else:
+            self.data[name].Fill(valuex, valuey)
+    
     def set_content(self, name, ibin, value):
         self.data[name].SetBinContent(ibin, value)
+    
+    def set_content_2d(self, name, ibin, jbin, value):
+        self.data[name].SetBinContent(ibin, jbin, value)
     
     def add_content(self, name, ibin, weight=None):
         if weight is not None:
