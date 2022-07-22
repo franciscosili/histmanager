@@ -1,4 +1,5 @@
 import ROOT
+from array import array
 
 class HistManager:
 
@@ -11,12 +12,20 @@ class HistManager:
     def set_weight(self, w):
         self.weight = w
 
-    def add(self, name, xbins, xmin, xmax):
-        self.data[name] = ROOT.TH1F(name, name, xbins, xmin, xmax)
+    def add(self, name, nxbins=None, xmin=None, xmax=None, bins=None):
+        if not bins: self.data[name] = ROOT.TH1F(name, name, nxbins, xmin, xmax)
+        else:        self.data[name] = ROOT.TH1F(name, name, array('d', bins))
         self.data[name].Sumw2()
 
-    def add_2d(self, name, xbins, xmin, xmax, ybins, ymin, ymax):
-        self.data[name] = ROOT.TH2F(name, name, xbins, xmin, xmax, ybins, ymin, ymax)
+    def add_2d(self, name, nxbins, xmin=None, xmax=None, nybins=None, ymin=None, ymax=None, binsx=None, binsy=None):
+        if not binsx and not binsy:
+            self.data[name] = ROOT.TH2F(name, name, nxbins, xmin, xmax, nybins, ymin, ymax)
+        elif not binsx and binsy:
+            self.data[name] = ROOT.TH2F(name, name, nxbins, xmin, xmax, nybins, array('d', binsy))
+        elif binsx and not binsy:
+            self.data[name] = ROOT.TH2F(name, name, nxbins, array('d', binsx), nybins, ymin, ymax)
+        elif binsx and binsy:
+            self.data[name] = ROOT.TH2F(name, name, nxbins, array('d', binsx), nybins, array('d', binsy))
         self.data[name].Sumw2()
 
     def add_profile(self, name, xbins, xmin, xmax, ymin, ymax):
