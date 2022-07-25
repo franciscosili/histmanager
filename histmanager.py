@@ -12,9 +12,9 @@ class HistManager:
     def set_weight(self, w):
         self.weight = w
 
-    def add(self, name, nxbins=None, xmin=None, xmax=None, bins=None):
+    def add(self, name, nxbins, xmin=None, xmax=None, bins=None):
         if not bins: self.data[name] = ROOT.TH1F(name, name, nxbins, xmin, xmax)
-        else:        self.data[name] = ROOT.TH1F(name, name, array('d', bins))
+        else:        self.data[name] = ROOT.TH1F(name, name, nxbins, array('d', bins))
         self.data[name].Sumw2()
 
     def add_2d(self, name, nxbins, xmin=None, xmax=None, nybins=None, ymin=None, ymax=None, binsx=None, binsy=None):
