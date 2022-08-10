@@ -1,9 +1,11 @@
 import ROOT
 from array import array
+import os
 
 class HistManager:
 
     def __init__(self, path=None):
+        self.path = path
         self.data = dict()
         if path is not None:
             self.load(path)
@@ -72,12 +74,15 @@ class HistManager:
         self.data[name].Fill(value_x, value_y, weight)
 
     def save(self, path):
+        self.path = path
+        if not os.path.exists(self.path): os.makedirs(self.path)
         f = ROOT.TFile(path, 'recreate')
         f.cd()
         for name, hist in sorted(self.data.items()):
             hist.Write(name)
 
     def load(self, path):
+        self.path = path
         f = ROOT.TFile.Open(path)
         for key in f.GetListOfKeys():
             name = key.GetName()
