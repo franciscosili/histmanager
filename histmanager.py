@@ -66,9 +66,22 @@ class HistManager:
         self.data[name].SetBinContent(ibin, value)
     #===============================================================================================
     
+    #===============================================================================================
+    def set_error(self, name, ibin, error):
+        self.data[name].SetBinError(ibin, error)
+    #===============================================================================================
+    
+    #===============================================================================================
     def set_content_2d(self, name, ibin, jbin, value):
         self.data[name].SetBinContent(ibin, jbin, value)
+    #===============================================================================================
     
+    #===============================================================================================
+    def set_error_2d(self, name, ibin, jbin, error):
+        self.data[name].SetBinError(ibin, jbin, error)
+    #===============================================================================================
+    
+    #===============================================================================================
     def add_content(self, name, ibin, weight=None):
         if weight is not None:
             self.data[name].AddBinContent(ibin, weight)
@@ -91,15 +104,40 @@ class HistManager:
             hist.Write(name)
     #===============================================================================================
 
-    def load(self, path):
-        f = ROOT.TFile.Open(path)
-        for key in f.GetListOfKeys():
+    #===============================================================================================
+    def loop_keys(self, f, keys, folder=None):
+        for key in keys:
             name = key.GetName()
-            self.data[name] = f.Get(name)
-            try:
-                self.data[name].SetDirectory(0)
-            except:
-                pass
+            obj  = f.Get(name)
+            if obj.ClassName() != 'TDirectoryFile':
+                self.data[name] = f.Get(name)
+                try:
+                    self.data[name].SetDirectory(0)
+                except:
+                    pass
+            else:
+                if folder:
+                    if folder == obj.GetName():
+                        self.loop_keys(obj, obj.GetListOfKeys())
+    #===============================================================================================
+    
+    #===============================================================================================
+    def load(self, path, folder=None):
+        f = ROOT.TFile.Open(path)
+        self.loop_keys(f, f.GetListOfKeys(), folder)
+        # for key in f.GetListOfKeys():
+        #     name = key.GetName()
+        #     obj  = f.Get(name)
+        #     if obj.ClassName() != 'TDirectory':
+        #         self.data[name] = f.Get(name)
+        #         try:
+        #             self.data[name].SetDirectory(0)
+        #         except:
+        #             pass
+        #     else:
+        #         if folder:
+        #             if folder == obj.GetName():
+    #===============================================================================================
 
     #===============================================================================================
     def __getitem__(self, key):
