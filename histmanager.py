@@ -94,8 +94,13 @@ class HistManager:
     #===============================================================================================
 
     #===============================================================================================
-    def fill_profile(self, name, value_x, value_y, weight):
-        self.data[name].Fill(value_x, value_y, weight)
+    def fill_profile(self, name, value_x, value_y, weight=None):
+        if weight is not None:
+            self.data[name].Fill(value_x, value_y, weight)
+        elif self.weight is not None:
+            self.data[name].Fill(value_x, value_y, self.weight)
+        else:
+            self.data[name].Fill(value_x, value_y)
     #===============================================================================================
 
     #===============================================================================================
