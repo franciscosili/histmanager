@@ -4,11 +4,13 @@ import os
 
 class HistManager:
     #===============================================================================================
-    def __init__(self, path=None):
+    def __init__(self, path=None, hists_dict=None):
         self.path = path
         self.data = dict()
         if path is not None:
             self.load(path)
+        if hists_dict is not None:
+            self.dict_to_hm(hists_dict)
         self.weight = None
     #===============================================================================================
 
@@ -36,6 +38,11 @@ class HistManager:
             self.data[name] = ROOT.TH2F(name, name, nxbins, array('d', binsx), nybins, array('d', binsy))
         self.data[name].Sumw2()
     #===============================================================================================
+    
+    # #===============================================================================================
+    # def add_graph(self, ):
+    #     pass
+    # #===============================================================================================
 
     #===============================================================================================
     def add_profile(self, name, xbins, xmin, xmax, ymin, ymax):
@@ -134,18 +141,14 @@ class HistManager:
     def load(self, path, folder=None):
         f = ROOT.TFile.Open(path)
         self.loop_keys(f, f.GetListOfKeys(), folder)
-        # for key in f.GetListOfKeys():
-        #     name = key.GetName()
-        #     obj  = f.Get(name)
-        #     if obj.ClassName() != 'TDirectory':
-        #         self.data[name] = f.Get(name)
-        #         try:
-        #             self.data[name].SetDirectory(0)
-        #         except:
-        #             pass
-        #     else:
-        #         if folder:
-        #             if folder == obj.GetName():
+        return
+    #===============================================================================================
+
+    #===============================================================================================
+    def dict_to_hm(self, hists_dict):
+        for k, h in hists_dict.items():
+            self.data[k] = h
+        return
     #===============================================================================================
 
     #===============================================================================================
